@@ -38,14 +38,14 @@ def shake(reader):
     sha.update(r)
   return sha.digest(digestsize)
   
-# compute randomart matrix from data
-def randomart(data):
+# compute randomart matrix from hash
+def randomart(H):
   # initialize "drawing board" and positional vector
   size = (9, 18)
   mat = zeros(size).astype(int)
   pos = (array(size) / 2).astype(int)
   # perform movements and compute matrix
-  for mov in movements(shake(data)):
+  for mov in movements(H):
     p = tuple(pos)
     mat.itemset(p, mat.item(p) + 1)
     pos = (pos + mov) % size
@@ -64,6 +64,11 @@ def draw(mat, ascii=False):
     print("|" if ascii else "│")
   print(("+---|SHAKE256/%d|--+" if ascii else "╰───╴SHAKE256/%d╶──╯") % digestsize)
 
+# print base64 encoded hash
+def printhash(H):
+  import base64
+  print("SHAKE256/%d:%s" % (digestsize, base64.b64encode(H).decode()))
+
 # -----------
 if __name__ == "__main__":
 
@@ -80,7 +85,16 @@ if __name__ == "__main__":
       nargs="?",
       help="input file (default: stdin)",
   )
-  parser.add_argument("--ascii", action="store_true", help="use ASCII frame")
+  parser.add_argument(
+      "--ascii",
+      action="store_true",
+      help="use ASCII frame",
+  )
+  parser.add_argument(
+      "--hash",
+      action="store_true",
+      help="print base64 encoded hash line aswell",
+  )
   parser.add_argument(
       "--digest-size",
       help="SHAKE256 digest size (must be divisible by 3)",
@@ -91,5 +105,8 @@ if __name__ == "__main__":
   args = parser.parse_args()
 
   digestsize = args.digest_size
+  digest = shake(args.file)
 
-  draw(randomart(args.file), args.ascii)
+  if args.hash:
+    printhash(digest)
+  draw(randomart(digest), args.ascii)
