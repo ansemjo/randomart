@@ -1,5 +1,7 @@
 # randomart.py
 
+[![CodeFactor](https://www.codefactor.io/repository/github/ansemjo/randomart/badge)](https://www.codefactor.io/repository/github/ansemjo/randomart)
+
 A script to present SHAKE256 hashes as small ASCII-art pictures, similarly to OpenSSH's
 [randomart](https://superuser.com/q/22535).
 
