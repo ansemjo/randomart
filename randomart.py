@@ -1,4 +1,4 @@
-import numpy
+from numpy import zeros, array
 import hashlib
 
 # split every 3 bytes
@@ -7,8 +7,8 @@ def split3(bytearr):
     raise ValueError("length of 'bytearr' not divisible by 3")
   return (bytearr[i:i+3] for i in range(0, len(bytearr), 3))
 
-# convert three bytes to a large int
-# and split that into three-bit values {0..7}
+# convert three bytes to a large int and
+# split that into three-bit values {0..7}
 def bits(triplet):
   if len(triplet) != 3:
     raise ValueError("length of 'triplet' not 3")
@@ -26,44 +26,53 @@ directions = {
 def movements(H):
   return (directions[i] for l in (bits(t) for t in split3(H)) for i in l)
 
-# digest a reader to produce pseudorandom data mod 3
-def sha384(reader):
-  sha = hashlib.sha384()
+# digest a reader to produce pseudorandom data
+# with length mod 3
+digestsize = 54
+def shake(reader):
+  sha = hashlib.shake_256()
   while True:
     r = reader.read(4096)
     if not r:
       break
     sha.update(r)
-  return sha.digest()
+  return sha.digest(digestsize)
   
 # compute randomart matrix from data
 def randomart(data):
   # initialize "drawing board" and positional vector
   size = (9,18)
-  mat = numpy.zeros(size).astype(int)
-  pos = (numpy.array(size) / 2).astype(int)
+  mat = zeros(size).astype(int)
+  pos = (array(size) / 2).astype(int)
+  #pos = array((5,0))
   # perform movements and compute matrix
-  for mov in movements(sha384(data)):
+  for mov in movements(shake(data)):
     p = tuple(pos)
     mat.itemset(p, mat.item(p) + 1)
     pos = (pos + mov) % size
   return mat
 
 # character palette for display
-palette = " `*=%!REWS"
-#palette = " .aBcDeFgHiJkLmNoPqRsT"
+palette = " .*=%!~R_EWS0123456789abcdefghijklmnop"
 symbol = lambda c: palette[ c % len(palette) ]
   
 # draw characters in a box
-def draw(mat):
-  print("╭──╴randomart.py╶──╮")
+def draw(mat, ascii=False):
+  print("+--|randomart.py|--+" if ascii else "╭──╴randomart.py╶──╮")
   for line in mat:
-    print("│", end='')
+    print("|" if ascii else "│", end='')
     print(''.join((symbol(el) for el in line)), end='')
-    print("│")
-  print("╰─────╴SHA384╶─────╯")
+    print("|" if ascii else "│")
+  print(("+---|SHAKE256/%d|--+" if ascii else "╰───╴SHAKE256/%d╶──╯") % digestsize)
 
 # -----------
 if __name__ == '__main__':
-  import sys
-  draw(randomart(sys.stdin.buffer))
+
+  import argparse
+
+  parser = argparse.ArgumentParser()
+  parser.add_argument('file', type=argparse.FileType('rb'), default='/dev/stdin', nargs='?')
+  parser.add_argument('--ascii', action='store_true', help='use ASCII frame')
+  args = parser.parse_args()
+
+  draw(randomart(args.file), args.ascii)
