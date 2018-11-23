@@ -69,12 +69,12 @@ def draw(mat, ascii=False):
     print("|" if ascii else "│", end="")
     print("".join((symbol(el) for el in line)), end="")
     print("|" if ascii else "│")
-  print(("+---|SHAKE256/%d|--+" if ascii else "╰───╴SHAKE256/%d╶──╯") % digestsize)
+  print(("+--|SHAKE256/%03d|--+" if ascii else "╰──╴SHAKE256/%03d╶──╯") % digestsize)
 
 # print base64 encoded hash
 def printhash(H):
   import base64
-  print("SHAKE256/%d:%s" % (digestsize, base64.b64encode(H).decode()))
+  print("SHAKE256/%03d:%s" % (digestsize, base64.b64encode(H).decode()))
 
 # -----------
 if __name__ == "__main__":
