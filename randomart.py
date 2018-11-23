@@ -68,6 +68,9 @@ def draw(mat, ascii=False):
 if __name__ == '__main__':
 
   import argparse
+  import signal
+
+  signal.signal(signal.SIGINT, lambda *a: exit(1))
 
   parser = argparse.ArgumentParser()
   parser.add_argument('file', type=argparse.FileType('rb'), default='/dev/stdin', nargs='?', help='input file (default: stdin)')
