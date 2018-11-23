@@ -5,7 +5,7 @@ import hashlib
 def split3(bytearr):
   if len(bytearr) % 3 != 0:
     raise ValueError("length of 'bytearr' not divisible by 3")
-  return (bytearr[i:i+3] for i in range(0, len(bytearr), 3))
+  return (bytearr[i : i + 3] for i in range(0, len(bytearr), 3))
 
 # convert three bytes to a large int and
 # split that into three-bit values {0..7}
@@ -41,7 +41,7 @@ def shake(reader):
 # compute randomart matrix from data
 def randomart(data):
   # initialize "drawing board" and positional vector
-  size = (9,18)
+  size = (9, 18)
   mat = zeros(size).astype(int)
   pos = (array(size) / 2).astype(int)
   # perform movements and compute matrix
@@ -53,19 +53,19 @@ def randomart(data):
 
 # character palette for display
 palette = " .*=%!~R_EWS0123456789abcdefghijklmnop"
-symbol = lambda c: palette[ c % len(palette) ]
+symbol = lambda c: palette[c % len(palette)]
   
 # draw characters in a box
 def draw(mat, ascii=False):
   print("+--|randomart.py|--+" if ascii else "╭──╴randomart.py╶──╮")
   for line in mat:
-    print("|" if ascii else "│", end='')
-    print(''.join((symbol(el) for el in line)), end='')
+    print("|" if ascii else "│", end="")
+    print("".join((symbol(el) for el in line)), end="")
     print("|" if ascii else "│")
   print(("+---|SHAKE256/%d|--+" if ascii else "╰───╴SHAKE256/%d╶──╯") % digestsize)
 
 # -----------
-if __name__ == '__main__':
+if __name__ == "__main__":
 
   import argparse
   import signal
@@ -73,9 +73,21 @@ if __name__ == '__main__':
   signal.signal(signal.SIGINT, lambda *a: exit(1))
 
   parser = argparse.ArgumentParser()
-  parser.add_argument('file', type=argparse.FileType('rb'), default='/dev/stdin', nargs='?', help='input file (default: stdin)')
-  parser.add_argument('--ascii', action='store_true', help='use ASCII frame')
-  parser.add_argument('--digest-size', help='SHAKE256 digest size (must be divisible by 3)', default=54, type=int, metavar='bytes')
+  parser.add_argument(
+      "file",
+      type=argparse.FileType("rb"),
+      default="/dev/stdin",
+      nargs="?",
+      help="input file (default: stdin)",
+  )
+  parser.add_argument("--ascii", action="store_true", help="use ASCII frame")
+  parser.add_argument(
+      "--digest-size",
+      help="SHAKE256 digest size (must be divisible by 3)",
+      default=54,
+      type=int,
+      metavar="bytes",
+  )
   args = parser.parse_args()
 
   digestsize = args.digest_size
