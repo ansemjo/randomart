@@ -31,17 +31,19 @@ directions = {
 def movements(H):
   return (directions[i] for l in (bits(t) for t in split3(H)) for i in l)
 
-# digest a reader to produce pseudorandom data
-# with length mod 3
+# digest a reader to produce pseudorandom data and also
+# return the digest of the digest itself
 digestsize = 54
 def shake(reader):
-  sha = hashlib.shake_256()
+  shaker = hashlib.shake_256()
   while True:
     r = reader.read(4096)
     if not r:
       break
-    sha.update(r)
-  return sha.digest(digestsize)
+    shaker.update(r)
+  first = shaker.digest(digestsize)
+  second = hashlib.shake_256(first).digest(digestsize)
+  return first, second
   
 # compute randomart matrix from hash
 def randomart(H):
@@ -117,8 +119,8 @@ if __name__ == "__main__":
   args = parser.parse_args()
 
   digestsize = args.digest_size
-  digest = shake(args.file)
+  digest, rehash = shake(args.file)
 
   if args.hash:
     printhash(digest)
-  draw(randomart(digest), args.ascii)
+  draw(randomart(rehash), args.ascii)
