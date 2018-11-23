@@ -63,13 +63,13 @@ palette = " .*=%!~R_EWS0123456789abcdefghijklmnop"
 symbol = lambda c: palette[c % len(palette)]
   
 # draw characters in a box
-def draw(mat, ascii=False):
-  print("+--|randomart.py|--+" if ascii else "╭──╴randomart.py╶──╮")
+def draw(mat, use_ascii=False):
+  print("+--|randomart.py|--+" if use_ascii else "╭──╴randomart.py╶──╮")
   for line in mat:
-    print("|" if ascii else "│", end="")
+    print("|" if use_ascii else "│", end="")
     print("".join((symbol(el) for el in line)), end="")
-    print("|" if ascii else "│")
-  print(("+--|SHAKE256/%03d|--+" if ascii else "╰──╴SHAKE256/%03d╶──╯") % digestsize)
+    print("|" if use_ascii else "│")
+  print(("+--|SHAKE256/%03d|--+" if use_ascii else "╰──╴SHAKE256/%03d╶──╯") % digestsize)
 
 # print base64 encoded hash
 def printhash(H):
