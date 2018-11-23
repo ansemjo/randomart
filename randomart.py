@@ -82,6 +82,13 @@ if __name__ == "__main__":
 
   signal.signal(signal.SIGINT, lambda *a: exit(1))
 
+  # type of an int divisible by 3
+  def int3(arg):
+    i = int(arg)
+    if i % 3 != 0:
+      raise argparse.ArgumentTypeError("argument not divisible by 3")
+    return i
+
   parser = argparse.ArgumentParser()
   parser.add_argument(
       "file",
@@ -104,7 +111,7 @@ if __name__ == "__main__":
       "--digest-size",
       help="SHAKE256 digest size (must be divisible by 3)",
       default=54,
-      type=int,
+      type=int3,
       metavar="bytes",
   )
   args = parser.parse_args()
