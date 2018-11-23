@@ -44,7 +44,6 @@ def randomart(data):
   size = (9,18)
   mat = zeros(size).astype(int)
   pos = (array(size) / 2).astype(int)
-  #pos = array((5,0))
   # perform movements and compute matrix
   for mov in movements(shake(data)):
     p = tuple(pos)
@@ -71,8 +70,11 @@ if __name__ == '__main__':
   import argparse
 
   parser = argparse.ArgumentParser()
-  parser.add_argument('file', type=argparse.FileType('rb'), default='/dev/stdin', nargs='?')
+  parser.add_argument('file', type=argparse.FileType('rb'), default='/dev/stdin', nargs='?', help='input file (default: stdin)')
   parser.add_argument('--ascii', action='store_true', help='use ASCII frame')
+  parser.add_argument('--digest-size', help='SHAKE256 digest size (must be divisible by 3)', default=54, type=int, metavar='bytes')
   args = parser.parse_args()
+
+  digestsize = args.digest_size
 
   draw(randomart(args.file), args.ascii)
