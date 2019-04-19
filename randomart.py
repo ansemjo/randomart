@@ -3,7 +3,7 @@
 # Copyright (c) 2018 Anton Semjonov
 # Licensed under the MIT License
 
-from randomart import __metadata__ as metadata
+from randomart import metadata
 from numpy import zeros, array
 import hashlib
 
@@ -93,8 +93,8 @@ if __name__ == "__main__":
     return i
 
   parser = argparse.ArgumentParser(
-    description=metadata.DESCRIPTION,
-    epilog="%%(prog)s version %s" % metadata.VERSION,
+    description=metadata.get("description"),
+    epilog="%%(prog)s version %s" % metadata.get("version"),
   )
   parser.add_argument(
       "file",

@@ -4,14 +4,18 @@
 # Licensed under the MIT License
 
 # metadata
-NAME = "randomart"
-AUTHOR = "Anton Semjonov"
-EMAIL = "anton@semjonov.de"
-URL = "https://github.com/ansemjo/randomart"
-LICENSE = "MIT"
-DESCRIPTION = "Generate ASCII randomart by hashing input and using an adapted drunken bishop alogirthm."
-KEYWORDS = "randomart drunken bishop openssh hash comparison"
-SCRIPTS = [NAME + ".py"]
+meta = {
+    "name": "randomart",
+    "author": "Anton Semjonov",
+    "author_email": "anton@semjonov.de",
+    "url": "https://github.com/ansemjo/randomart",
+    "license": "MIT",
+    "description": "Generate ASCII randomart by hashing input and using an adapted drunken bishop alogirthm.",
+    "keywords": "randomart drunken bishop openssh hash comparison",
+}
+
+# package requirements
+SCRIPTS = [meta["name"] + ".py"]
 PYTHON = ">3.5"
 REQUIREMENTS = ["numpy"]
 
@@ -23,24 +27,14 @@ from setuptools import setup, find_packages
 
 # read current version
 environ["REVISION_SEPERATOR"] = "-dev"
-VERSION = cmd(["sh", "version.sh", "version"]).strip().decode()
+meta["version"] = cmd(["sh", "version.sh", "version"]).strip().decode()
 
-# embed package metadata subset
-with (path(NAME) / "__metadata__.py").open("w") as v:
-    v.write(f'VERSION = "{VERSION}"\n')
-    v.write(f'AUTHOR = "{AUTHOR}"\n')
-    v.write(f'URL = "{URL}"\n')
-    v.write(f'DESCRIPTION = "{DESCRIPTION}"\n')
+# embed package metadata
+with (path(meta["name"]) / "__metadata__.py").open("w") as v:
+    v.write("metadata = %s" % str(meta))
 
 setup(
-    name=NAME,
-    description=DESCRIPTION,
-    keywords=KEYWORDS,
-    version=VERSION,
-    license=LICENSE,
-    author=AUTHOR,
-    author_email=EMAIL,
-    url=URL,
+    **meta,
     scripts=SCRIPTS,
     packages=find_packages(),
     python_requires=PYTHON,

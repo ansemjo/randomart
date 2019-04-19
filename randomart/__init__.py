@@ -1,4 +1,5 @@
 try:
-  from .__metadata__ import VERSION as __version__
+    from .__metadata__ import metadata
 except ImportError:
-  __version__ = "development"
+    metadata = {"version": "development"}
+
