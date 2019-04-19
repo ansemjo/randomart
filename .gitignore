@@ -1,0 +1,8 @@
+# setuptools artifacts
+build/
+dist/
+**/**.egg-info/
+**/__metadata__.py
+
+# cache
+**/__pycache__/

@@ -3,6 +3,7 @@
 # Copyright (c) 2018 Anton Semjonov
 # Licensed under the MIT License
 
+from randomart import __metadata__ as metadata
 from numpy import zeros, array
 import hashlib
 
@@ -91,7 +92,10 @@ if __name__ == "__main__":
       raise argparse.ArgumentTypeError("argument not divisible by 3")
     return i
 
-  parser = argparse.ArgumentParser()
+  parser = argparse.ArgumentParser(
+    description=metadata.DESCRIPTION,
+    epilog="%%(prog)s version %s" % metadata.VERSION,
+  )
   parser.add_argument(
       "file",
       type=argparse.FileType("rb"),
