@@ -5,7 +5,7 @@
 
 from randomart import metadata
 from numpy import zeros, array
-import hashlib
+from hashlib import blake2b
 
 # split every 3 bytes
 def split3(bytearr):
@@ -32,20 +32,22 @@ directions = {
 def movements(H):
   return (directions[i] for l in (bits(t) for t in split3(H)) for i in l)
 
-# digest a reader to produce pseudorandom data and also
-# return the digest of the digest itself
-digestsize = 54
-def shake(reader):
-  shaker = hashlib.shake_256()
+# must follow hashlib library api and produce 64+ byte digest
+HASH = blake2b
+
+# read data in chunks
+CHUNKSIZE = 64 * 1024
+
+# digest a reader in chunks to produce pseudorandom data
+def digest(reader):
+  h = HASH()
   while True:
-    r = reader.read(4096)
-    if not r:
+    buf = reader.read(4096)
+    if len(buf) == 0:
       break
-    shaker.update(r)
-  first = shaker.digest(digestsize)
-  second = hashlib.shake_256(first).digest(digestsize)
-  return first, second
-  
+    h.update(buf)
+  return h.digest()
+
 # compute randomart matrix from hash
 def randomart(H):
   # initialize "drawing board" and positional vector
@@ -70,12 +72,12 @@ def draw(mat, use_ascii=False):
     print("|" if use_ascii else "│", end="")
     print("".join((symbol(el) for el in line)), end="")
     print("|" if use_ascii else "│")
-  print(("+--|SHAKE256/%03d|--+" if use_ascii else "╰──╴SHAKE256/%03d╶──╯") % digestsize)
+  print(("+---|BLAKE2b/64|---+" if use_ascii else "╰───╴BLAKE2b/64╶───╯"))
 
 # print base64 encoded hash
 def printhash(H):
   import base64
-  print("SHAKE256/%03d:%s" % (digestsize, base64.b64encode(H).decode()))
+  print("BLAKE2b/64:%s" % base64.b64encode(H).decode())
 
 # -----------
 if __name__ == "__main__":
@@ -84,13 +86,6 @@ if __name__ == "__main__":
   import signal
 
   signal.signal(signal.SIGINT, lambda *a: exit(1))
-
-  # type of an int divisible by 3
-  def int3(arg):
-    i = int(arg)
-    if i % 3 != 0:
-      raise argparse.ArgumentTypeError("argument not divisible by 3")
-    return i
 
   parser = argparse.ArgumentParser(
     description=metadata.get("description"),
@@ -113,18 +108,10 @@ if __name__ == "__main__":
       action="store_true",
       help="print base64 encoded hash line aswell",
   )
-  parser.add_argument(
-      "--digest-size",
-      help="SHAKE256 digest size (must be divisible by 3)",
-      default=54,
-      type=int3,
-      metavar="bytes",
-  )
   args = parser.parse_args()
 
-  digestsize = args.digest_size
-  digest, rehash = shake(args.file)
+  d = digest(args.file)
 
   if args.hash:
-    printhash(digest)
-  draw(randomart(rehash), args.ascii)
+    printhash(d)
+  draw(randomart(d[:63]), args.ascii)
