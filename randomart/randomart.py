@@ -44,6 +44,8 @@ TRANSLATION = {
   
 # draw characters in a box
 def draw(matrix, name, palette=PALETTE):
+  if len(name) != 10:
+    raise ValueError("name must be 10 characters")
   # pick n'th character from palette
   symbol = lambda n: PALETTE[n % len(PALETTE)]
   # write randomart to string buffer line by line
@@ -53,9 +55,3 @@ def draw(matrix, name, palette=PALETTE):
     art.write("│%s│\n" % "".join((symbol(el) for el in line)))
   art.write("╰───╴%s╶───╯\n" % name)
   return art.getvalue()
-
-# combine all in one function
-def randomart(digest, name):
-  if len(name) != 10:
-    raise ValueError("name must be 10 characters")
-  return draw(drunkenwalk(digest), name)

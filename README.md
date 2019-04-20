@@ -2,7 +2,7 @@
 
 [![CodeFactor](https://www.codefactor.io/repository/github/ansemjo/randomart/badge)](https://www.codefactor.io/repository/github/ansemjo/randomart)
 
-A script to present SHAKE256 hashes as small ASCII-art pictures, similarly to OpenSSH's
+A script to present BLAKE2b hashes as small ASCII-art pictures, similarly to OpenSSH's
 [randomart](https://superuser.com/q/22535).
 
 This allows easier verification by humans but may not be as secure as a bytewise comparison of the
@@ -26,28 +26,48 @@ bishop" walk of the OpenSSH implementation. The implementation at hand:
 I have not performed any similar analysis[<sup>2</sup>][^2] but would expect my implementation to
 perform no worse.
 
+## installation
+
+Install with pip directly from GitHub:
+
+    pip install git+https://github.com/ansemjo/randomart
+
 ## usage
 
-Use `--help` to output up-to-date usage help. The following arguments are available:
+The script expects a file in the first positional argument or otherwise simply reads from standard
+input. It is thus best suitable for usage in a pipe:
 
-- `--ascii` - use only ASCII characters for the box frame
+    echo 'Hello, World!' | randomart.py
+
+There are two flags to control the output:
+
+- `--ascii` use only ASCII characters for the box frame
 - `--hash` - print the computed digest before the randomart picture
-- `--digest-size <bytes>` - use a different digest size with SHAKE256
 
-The data to be digested is read either from the file given as the first positional argument or
-standard input if none was given.
+Otherwise use `randomart.py --help` for usage help.
 
-Internally, the data is hashed twice: the first digest is used to print the digest in base64 encoded
-form. This digest ist then hashed itself to produce the input for the randomart. This is done so
-that small differences in the computed digest result in vastly different pictures. The digest size
-must be divisble by 3 due to the use of three-bit values to generate movements on the "drawing
-board".
+### as a library
+
+If you want to use your own hash you can import `randomart.randomart`:
+
+```python
+from randomart import randomart
+...
+
+# generate your hash digest
+digest = ...
+
+# generate randomart, HASHNAME must be 10 characters
+art = randomart.draw(randomart.drunkenwalk(digest), HASHNAME)
+print(art)
+```
 
 [^1]:
-  http://www.ece.cmu.edu/~adrian/projects/validation/validation.pdf
-  "Perrig A. and Song D., 1999, International Workshop on Cryptographic Techniques and E-Commerce
-  (CrypTEC '99)"
+
+  http://www.ece.cmu.edu/~adrian/projects/validation/validation.pdf "Perrig A. and Song D., 1999,
+  International Workshop on Cryptographic Techniques and E-Commerce (CrypTEC '99)"
 
 [^2]:
-  http://www.dirk-loss.de/sshvis/drunken_bishop.pdf
-  "Dirk Loss, Tobias Limmer, Alexander von Gernler, 2009"
+
+  http://www.dirk-loss.de/sshvis/drunken_bishop.pdf "Dirk Loss, Tobias Limmer, Alexander von
+  Gernler, 2009"
