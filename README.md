@@ -28,9 +28,13 @@ perform no worse.
 
 ## installation
 
-Install with pip directly from GitHub:
+Install the latest version with pip directly from GitHub:
 
     pip install git+https://github.com/ansemjo/randomart
+
+Or from [PyPI](https://pypi.org/project/randomart/):
+
+    pip install randomart
 
 ## usage
 
