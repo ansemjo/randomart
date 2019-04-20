@@ -27,7 +27,7 @@ from setuptools import setup, find_packages
 
 # read current version
 environ["REVISION_SEPERATOR"] = "-dev"
-meta["version"] = cmd(["sh", "version.sh", "version"]).strip().decode()
+meta["version"] = cmd(["/bin/sh", "version.sh", "version"]).strip().decode()
 
 # embed package metadata
 with (path("random_art") / "__metadata__.py").open("w") as v:

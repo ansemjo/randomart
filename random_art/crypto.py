@@ -12,7 +12,7 @@ def digest(reader):
   h = HASH()
   while True:
     buf = reader.read(CHUNKSIZE)
-    if len(buf) == 0:
+    if not buf:
       break
     h.update(buf)
   return h.digest()
