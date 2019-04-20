@@ -15,7 +15,7 @@ meta = {
 }
 
 # package requirements
-SCRIPTS = [meta["name"] + ".py"]
+SCRIPTS = ["randomart.py"]
 PYTHON = ">3.5"
 REQUIREMENTS = ["numpy"]
 
@@ -30,7 +30,7 @@ environ["REVISION_SEPERATOR"] = "-dev"
 meta["version"] = cmd(["sh", "version.sh", "version"]).strip().decode()
 
 # embed package metadata
-with (path(meta["name"]) / "__metadata__.py").open("w") as v:
+with (path("random_art") / "__metadata__.py").open("w") as v:
     v.write("metadata = %s" % str(meta))
 
 setup(

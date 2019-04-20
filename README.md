@@ -48,17 +48,17 @@ Otherwise use `randomart.py --help` for usage help.
 
 ### as a library
 
-If you want to use your own hash you can import `randomart.randomart`:
+If you want to use your own hash you can import from `random_art.randomart`:
 
 ```python
-from randomart import randomart
+from random_art.randomart import draw, drunkenwalk
 ...
 
 # generate your hash digest
 digest = ...
 
 # generate randomart, HASHNAME must be 10 characters
-art = randomart.draw(randomart.drunkenwalk(digest), HASHNAME)
+art = draw(drunkenwalk(digest), HASHNAME)
 print(art)
 ```
 

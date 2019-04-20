@@ -5,7 +5,8 @@
 
 import argparse
 
-from randomart import metadata, randomart, crypto
+from random_art import metadata, crypto
+from random_art.randomart import draw, drunkenwalk, TRANSLATION
 
 # exit on ctrl-c
 from signal import signal, SIGINT
@@ -50,11 +51,11 @@ if args.hash:
     print("%s:%s" % (crypto.HASHNAME, b64encode(digest).decode()))
 
 # generate randomart
-art = randomart.randomart(digest, name=crypto.HASHNAME)
+art = draw(drunkenwalk(digest), name=crypto.HASHNAME)
 
 # maybe translate to ascii
 if args.ascii:
-    art = art.translate(randomart.TRANSLATION)
+    art = art.translate(TRANSLATION)
 
 # print randomart
 print(art, end="")
