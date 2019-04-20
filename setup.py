@@ -26,7 +26,7 @@ from subprocess import check_output as cmd
 from setuptools import setup, find_packages
 
 # read current version
-environ["REVISION_SEPERATOR"] = "-dev"
+environ["REVISION_SEPERATOR"] = "-post"
 meta["version"] = cmd(["/bin/sh", "version.sh", "version"]).strip().decode()
 
 # embed package metadata
