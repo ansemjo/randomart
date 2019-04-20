@@ -35,6 +35,8 @@ with (path("random_art") / "__metadata__.py").open("w") as v:
 
 setup(
     **meta,
+    long_description=path("./README.md").read_text(),
+    long_description_content_type="text/markdown",
     scripts=SCRIPTS,
     packages=find_packages(),
     python_requires=PYTHON,
