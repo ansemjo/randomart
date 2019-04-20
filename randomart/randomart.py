@@ -2,7 +2,7 @@ from numpy import zeros, array
 from io import StringIO
 
 from .util import bytes_to_octal
-from .crypto import HASHNAME
+from .crypto import HASHNAME, digest
 
 def movements(octal):
   # associate octal digit with movement vector
@@ -15,7 +15,7 @@ def movements(octal):
   return (directions[c] for c in octal)
 
 # compute randomart matrix from hash digest
-def randomart(digest):
+def randomwalk(digest):
   # initialize "drawing board" and positional vector
   size = (9, 18)
   matrix = zeros(size).astype(int)
@@ -30,18 +30,25 @@ def randomart(digest):
 # character palette for display
 PALETTE = " .*=%!~R_EWS0123456789abcdefghijklmnop"
 symbol = lambda c: PALETTE[c % len(PALETTE)]
+
+# translation hash for ascii output
+TRANSLATION = {
+  ord("╭"): "/", ord("╮"): "\\", ord("╰"): "\\", ord("╯"): "/",
+  ord("│"): "|", ord("─"): "-", ord("╴"): "[", ord("╶"): "]",
+}
   
 # draw characters in a box
-def draw(matrix, use_ascii=False):
+def draw(matrix, name=HASHNAME):
   art = StringIO()
   # write randomart to string buffer line by line
   art.write("╭──╴randomart.py╶──╮\n")
   for line in matrix:
     art.write("│%s│\n" % "".join((symbol(el) for el in line)))
-  art.write("╰───╴%s╶───╯\n" % HASHNAME)
-  if use_ascii:
-    # utf8 border to ascii translation
-    return art.getvalue().translate({
-      ord("╭"): "/", ord("╮"): "\\", ord("╰"): "\\", ord("╯"): "/",
-      ord("│"): "|", ord("─"): "-", ord("╴"): "[", ord("╶"): "]", })
+  art.write("╰───╴%s╶───╯\n" % name)
   return art.getvalue()
+
+# combine all in one
+def randomart(reader):
+  d = digest(reader)
+  m = randomwalk(d)
+  return draw(m, name=HASHNAME)
