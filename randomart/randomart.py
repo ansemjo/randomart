@@ -1,8 +1,15 @@
 from numpy import zeros, array
 from io import StringIO
 
-from .util import bytes_to_octal
-from .crypto import HASHNAME, digest
+def bytes_to_octal(bytestr):
+  # calculate best possible number of digits
+  digits = int(len(bytestr) * 8/3)
+  # generate format string
+  fmt = b"%%0%do" % digits
+  # convert bytes to int and format as octal string
+  octal = fmt % int.from_bytes(bytestr, byteorder='big')
+  # return maximum "saturated" digits
+  return octal[-digits:]
 
 def movements(octal):
   # associate octal digit with movement vector
@@ -15,9 +22,8 @@ def movements(octal):
   return (directions[c] for c in octal)
 
 # compute randomart matrix from hash digest
-def randomwalk(digest):
+def drunkenwalk(digest, size=(9, 18)):
   # initialize "drawing board" and positional vector
-  size = (9, 18)
   matrix = zeros(size).astype(int)
   position = (array(size) / 2).astype(int)
   # perform movements and compute matrix
@@ -27,9 +33,8 @@ def randomwalk(digest):
     position = (position + move) % size
   return matrix
 
-# character palette for display
+# character palette for drawing
 PALETTE = " .*=%!~R_EWS0123456789abcdefghijklmnop"
-symbol = lambda c: PALETTE[c % len(PALETTE)]
 
 # translation hash for ascii output
 TRANSLATION = {
@@ -38,17 +43,19 @@ TRANSLATION = {
 }
   
 # draw characters in a box
-def draw(matrix, name=HASHNAME):
-  art = StringIO()
+def draw(matrix, name, palette=PALETTE):
+  # pick n'th character from palette
+  symbol = lambda n: PALETTE[n % len(PALETTE)]
   # write randomart to string buffer line by line
+  art = StringIO()
   art.write("╭──╴randomart.py╶──╮\n")
   for line in matrix:
     art.write("│%s│\n" % "".join((symbol(el) for el in line)))
   art.write("╰───╴%s╶───╯\n" % name)
   return art.getvalue()
 
-# combine all in one
-def randomart(reader):
-  d = digest(reader)
-  m = randomwalk(d)
-  return draw(m, name=HASHNAME)
+# combine all in one function
+def randomart(digest, name):
+  if len(name) != 10:
+    raise ValueError("name must be 10 characters")
+  return draw(drunkenwalk(digest), name)
