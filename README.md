@@ -10,13 +10,17 @@ digest!
 
 <span style="display:block;text-align:center">![](assets/randomart.png)</span>
 
-See the paper [Hash Visualization: a New Technique to improve Real-World Security<sup>1</sup>][^1]
+See the paper [Hash Visualization: a New Technique to improve Real-World Security][perrig]
 for more information on the concept of random art.
 
 The paper [The drunken bishop: An analysis of the OpenSSH fingerprint visualization
-algorithm<sup>2</sup>][^2] analyses the OpenSSH implementation in more detail.
+algorithm][bishop] analyses the OpenSSH implementation in more detail.
 
-It should be explicitly noted that my algorithm is _similar_ but not _identical_ to the "drunken
+Just to be clear: the input is passed into a hash function and its output is then used to generate the
+ASCII art. By virtue of BLAKE2b being a cryptographically secure hash function, *any* change in input
+will lead to a radically different output.
+
+It should also be explicitly noted that my algorithm is _similar_ but not _identical_ to the "drunken
 bishop" walk of the OpenSSH implementation. The implementation at hand:
 
 - flips sides at the borders, which turns the field into a torus
@@ -66,12 +70,5 @@ art = draw(drunkenwalk(digest), HASHNAME)
 print(art)
 ```
 
-[^1]:
-
-  http://www.ece.cmu.edu/~adrian/projects/validation/validation.pdf "Perrig A. and Song D., 1999,
-  International Workshop on Cryptographic Techniques and E-Commerce (CrypTEC '99)"
-
-[^2]:
-
-  http://www.dirk-loss.de/sshvis/drunken_bishop.pdf "Dirk Loss, Tobias Limmer, Alexander von
-  Gernler, 2009"
+[perrig]: http://www.ece.cmu.edu/~adrian/projects/validation/validation.pdf "Perrig A. and Song D., 1999,  International Workshop on Cryptographic Techniques and E-Commerce (CrypTEC '99)"
+[bishop]: http://www.dirk-loss.de/sshvis/drunken_bishop.pdf "Dirk Loss, Tobias Limmer, Alexander von Gernler, 2009"
