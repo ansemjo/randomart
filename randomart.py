@@ -3,15 +3,14 @@
 # Copyright (c) 2018 Anton Semjonov
 # Licensed under the MIT License
 
-import argparse
+import argparse, sys
+from signal import signal, SIGINT
 
 from random_art import metadata, crypto
 from random_art.randomart import draw, drunkenwalk, TRANSLATION
 
 # exit on ctrl-c
-from signal import signal, SIGINT
-
-signal(SIGINT, lambda *a: exit(1))
+signal(SIGINT, lambda *a: sys.exit(1))
 
 # initialize argument parser
 parser = argparse.ArgumentParser(

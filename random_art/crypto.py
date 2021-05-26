@@ -9,10 +9,10 @@ CHUNKSIZE = 64 * 1024
 
 # update a hash in chunks and return digest
 def digest(reader):
-  h = HASH()
-  while True:
-    buf = reader.read(CHUNKSIZE)
-    if not buf:
-      break
-    h.update(buf)
-  return h.digest()
+    h = HASH()
+    while True:
+        buf = reader.read(CHUNKSIZE)
+        if not buf:
+            break
+        h.update(buf)
+    return h.digest()
