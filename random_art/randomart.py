@@ -44,8 +44,8 @@ TRANSLATION = {
 
 # draw characters in a box
 def draw(matrix, name, palette=PALETTE):
-    if len(name) != 10:
-        raise ValueError("name must be 10 characters")
+    if len(name) > 18:
+        raise ValueError("name can't be more 16 characters")
     # pick n'th character from palette
     symbol = lambda n: PALETTE[n % len(PALETTE)]
     # write randomart to string buffer line by line
@@ -53,5 +53,5 @@ def draw(matrix, name, palette=PALETTE):
     art.write("╭──╴randomart.py╶──╮\n")
     for line in matrix:
         art.write("│%s│\n" % "".join((symbol(el) for el in line)))
-    art.write("╰───╴%s╶───╯\n" % name)
+    art.write("╰" + '─'*int(8 - len(name)/2) + '╴' + name + '╶' + '─'*(8 - len(name)//2) + "╯\n")  # dynamically calculate dashes for name
     return art.getvalue()
