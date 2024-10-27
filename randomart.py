@@ -21,7 +21,7 @@ parser = argparse.ArgumentParser(
 # the input file to be hashed
 parser.add_argument("file",
     type=argparse.FileType("rb"),
-    default="/dev/stdin",
+    default=None,
     nargs="?",
     help="input file (default: stdin)",
 )
@@ -41,8 +41,16 @@ parser.add_argument("--hash",
 # parse commandline
 args = parser.parse_args()
 
+if args.file is None:  # no input file was specified
+    import os
+    if os.name == 'posix':  # Linux and macOS
+        file = "/dev/stdin"
+    elif os.name == 'nt':   # Windows
+        import sys
+        file = sys.stdin.buffer.raw
+
 # hash the file
-digest = crypto.digest(args.file)
+digest = crypto.digest(file)
 
 # maybe print encoded digest
 if args.hash:
