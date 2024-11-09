@@ -29,7 +29,7 @@ def drunkenwalk(digest, size=(9, 18)):
     # perform movements and compute matrix
     for move in movements(bytes_to_octal(digest)):
         p = tuple(position)
-        matrix.itemset(p, matrix.item(p) + 1)
+        matrix[p] += 1
         position = (position + move) % size
     return matrix
 
