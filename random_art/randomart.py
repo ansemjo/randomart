@@ -44,7 +44,7 @@ TRANSLATION = {
 
 # draw characters in a box
 def draw(matrix, name, palette=PALETTE):
-    if len(name) > 18:
+    if len(name) > 16:
         raise ValueError("name can't be more 16 characters")
     # pick n'th character from palette
     symbol = lambda n: PALETTE[n % len(PALETTE)]
